@@ -4,12 +4,20 @@ const mongoose = require('mongoose');
 require('dotenv/config')
 
 const profilesRoutes = require('./routes/profiles');
-const feedbacksRoutes = require('./routes/feedback');
+const feedbacksRoutes = require('./routes/feedbacks');
+const messagesRoutes = require('./routes/messages');
+const documentsRoutes = require('./routes/documents');
+const requestsRoutes = require('./routes/requests');
+const resetPasswordsRoutes = require('./routes/passwordresets');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use('/', profilesRoutes);
 app.use('/', feedbacksRoutes);
+app.use('/', messagesRoutes);
+app.use('/', documentsRoutes);
+app.use('/', requestsRoutes);
+app.use('/', resetPasswordsRoutes);
 
 // see more in the routes folder 
 app.get('/', (req, res) => {

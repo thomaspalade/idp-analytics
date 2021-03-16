@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const ProfileSchema = mongoose.Schema({
     userId: { type: String, required: true },
+    publicCode: { type: String, required: false},
     firstName: { type: String, required: false},
     lastName: { type: String, required: false },
     email: { type: String, required: false},
@@ -12,6 +13,10 @@ const ProfileSchema = mongoose.Schema({
     address: { type: String, required: false },
     postalCode: { type: String, required: false},
     description: { type: String, required: false},
+    sharedDocumentsIds: { type: [String],  default: []},
+    pendingDocumentsIds: { type: [String],  default: []},
+    rejectedDocumentsIds: { type: [String],  default: []},
+    requestedDocumentsIds: { type: [String],  default: []},
     createdAt: {type: Date, default: Date.now}
 });
 
