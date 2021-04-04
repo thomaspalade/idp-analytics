@@ -1,12 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const aws = require('aws-sdk');
+const fs = require('fs');
+const multer = require('multer');
+
 const Document = require('../models/document');
 const Profile = require('../models/profile');
 
 // insert a new document 
 router.post('/documents', async (req, res) => {
   console.log(req.body);
-  console.log(req.body.tags)
+  console.log(req.body.tags);
+  console.log("post documents");
 
   const document = new Document({
     userId: req.body.userId,
@@ -14,15 +19,60 @@ router.post('/documents', async (req, res) => {
     description: req.body.description,
     extension: req.body.extension,
     sharedWith: req.body.sharedWith,
-    tags: req.body.tags
+    tags: req.body.tags,
+    locationUrl: req.body.locationUrl
   });
+
+  console.log(document);
   try {
     const savedDocument = await document.save();
+    console.log(JSON.stringify(savedDocument));
     res.status(201).json(savedDocument);
   } catch (err) {
     res.status(400).json({ message: err });
   }
 });
+
+// insert a new document 
+var signup = async (req, res) => {
+  // console.log(req);
+  console.log("tomi before");
+  console.log(req.body);
+  console.log("tomi after");
+  aws.config.setPromisesDependency();
+  aws.config.update({
+    accessKeyId: process.env.ACCESSKEYID,
+    secretAccessKey: process.env.SECRETACCESSKEY,
+    region: process.env.REGION
+  });
+  const s3 = new aws.S3();
+  var params = {
+    ACL: 'public-read',
+    Bucket: process.env.BUCKET_NAME,
+    Body: fs.createReadStream(req.file.path),
+    Key: `documents/${req.file.originalname}`
+  };
+
+  s3.upload(params, (err, data) => {
+    if (err) {
+      console.log('Error occured while trying to upload to S3 bucket', err);
+      res.status(500).json("probleme mari tati");
+    } else {
+      fs.unlinkSync(req.file.path); // Empty temp folder
+      const locationUrl = data.Location;
+      console.log(JSON.stringify(data));
+      console.log("locationUrl");
+      console.log(locationUrl);
+      res.status(200).json(locationUrl);
+    }
+  });
+};
+
+router.route('/upload/file').post(multer({
+   dest: 'temp/', limits: { fieldSize: 8 * 1024 * 1024 } 
+  }).single('file'),
+  signup
+  );
 
 router.post('/documents/getDocumentsByIds', async (req, res) => {
   console.log(req.body);
@@ -74,7 +124,8 @@ router.put('/document/:id', async (req, res) => {
           pendingDocumentsIds: req.body.pendingDocumentsIds,
           rejectedDocumentsIds: req.body.rejectedDocumentsIds,
           requestedDocumentsIds: req.body.requestedDocumentsIds,
-          tags: req.body.tags
+          tags: req.body.tags,
+          locationUrl: req.body.locationUrl
         }
       });
       const sharedWith = req.body.sharedWith;
@@ -264,10 +315,29 @@ router.get('/document/:id', async (req, res) => {
 });
 
 // Delete a document
-router.delete('/document/:id', async (req, res) => {
+router.post('/documentDelete/:id', async (req, res) => {
+  console.log(JSON.stringify(req.body)); // here we should have the public codes for people for casacde delete
+  const sharedWith = req.body.sharedWith;
+  const fileId = req.params.id;
   try {
-    const removedDocument = await Document.deleteOne({_id: req.params.id});
-    res.status(200).json(removedDocument);
+    // first we need to pull the fileId from everyone's shared sharedDocumentsIds array
+    console.log("here bebitza");
+    const updatedProfiles = await Profile.updateMany(
+      { publicCode: {$in: sharedWith} }, 
+      { $pull: {
+        sharedDocumentsIds: fileId
+      },
+        $pull: {
+        pendingDocumentsIds: fileId
+      }
+    });
+
+    try {
+      const removedDocument = await Document.deleteOne({_id: fileId});
+      res.status(200).json(removedDocument);
+    } catch (err) {
+      res.status(404).json({message: err});
+    }
   } catch(err) {
     res.status(404).json({message: err});
   }
@@ -293,7 +363,8 @@ router.patch('/document/:id', async (req, res) => {
         heading: req.body.heading,
         description: req.body.description,
         extension: req.body.extension,
-        tags: req.body.tags
+        tags: req.body.tags,
+        locationUrl: req.body.locationUrl
       }
     });
     res.json(updatedDocument);

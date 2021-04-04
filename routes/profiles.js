@@ -33,10 +33,13 @@ router.post('/profiles', async (req, res) => {
 
     });
     try {
+        console.log(JSON.stringify(profile));
         const savedProfile = await profile.save();
+        console.log(JSON.stringify(savedProfile));
         res.status(201).json(savedProfile);
     } catch (err) {
-        res.status(400).json({ message: err });
+        console.log(JSON.stringify(err.message));
+        res.status(400).json({ message: err.message });
     }
 });
 
@@ -120,6 +123,7 @@ router.put('/profile/:id', async (req, res) => {
 router.get('/profiles', async (req, res) => {
     try {
         const profiles = await Profile.find({});
+        console.log(JSON.stringify(profiles));
         res.status(200).json(profiles);
     } catch(err) {
         res.status(200).json({message: err});

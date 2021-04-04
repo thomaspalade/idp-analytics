@@ -7,6 +7,7 @@ const DocumentSchema = mongoose.Schema({
   extension: { type: String, required: false },
   tags: { type: [String], required: false },
   sharedWith: { type: [String], required: false },
+  locationUrl: { type: String, required: true },
   createdAt: { type: Date, default: Date.now }
 });
 

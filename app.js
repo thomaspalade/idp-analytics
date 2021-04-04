@@ -1,7 +1,10 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
-require('dotenv/config')
+const dotenv = require('dotenv');
+const cors = require('cors');
+
+dotenv.config();
 
 const profilesRoutes = require('./routes/profiles');
 const feedbacksRoutes = require('./routes/feedbacks');
@@ -18,13 +21,15 @@ app.use('/', messagesRoutes);
 app.use('/', documentsRoutes);
 app.use('/', requestsRoutes);
 app.use('/', resetPasswordsRoutes);
+app.use(cors());
 
 // see more in the routes folder 
 app.get('/', (req, res) => {
-    res.send('There is no place like /');
+    res.send('There is no place like sugi pl danutu/');
 });
 
 // now we have to set up default mongoose connection
+// tomi messing things up
 mongoose.connect("mongodb://localhost/mongotube", {
     useNewUrlParser: true,
     useUnifiedTopology: true

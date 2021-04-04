@@ -7,9 +7,9 @@ const jwt = require('jsonwebtoken');
 const config = require("../config.json");
 const userUpdater = require('../api/api');
 
-const mongoose = require('mongoose');
-const connectionOptions = { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false };
-mongoose.connect("mongodb://localhost/node-mongo-registration-login-api", connectionOptions);
+// const mongoose = require('mongoose');
+// const connectionOptions = { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false };
+// mongoose.connect("mongodb://localhost/node-mongo-registration-login-api", connectionOptions);
 
 // insert a new resetpassword 
 router.post('/passwordresets', async (req, res) => {
