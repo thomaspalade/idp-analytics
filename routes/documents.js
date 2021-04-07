@@ -34,11 +34,12 @@ router.post('/documents', async (req, res) => {
 });
 
 // insert a new document 
-var signup = async (req, res) => {
+var uploadFileAndInsertNewDocumentToDB = async (req, res) => {
   // console.log(req);
-  console.log("tomi before");
   console.log(req.body);
-  console.log("tomi after");
+  console.log(req.file.path);
+  console.log(req.file.mimetype);
+
   aws.config.setPromisesDependency();
   aws.config.update({
     accessKeyId: process.env.ACCESSKEYID,
@@ -60,10 +61,14 @@ var signup = async (req, res) => {
     } else {
       fs.unlinkSync(req.file.path); // Empty temp folder
       const locationUrl = data.Location;
+      console.log("tomitza nebunu bossule");
       console.log(JSON.stringify(data));
       console.log("locationUrl");
       console.log(locationUrl);
-      res.status(200).json(locationUrl);
+      res.status(200).json({
+        locationUrl: locationUrl,
+        extension: req.file.mimetype
+      });
     }
   });
 };
@@ -71,7 +76,7 @@ var signup = async (req, res) => {
 router.route('/upload/file').post(multer({
    dest: 'temp/', limits: { fieldSize: 8 * 1024 * 1024 } 
   }).single('file'),
-  signup
+  uploadFileAndInsertNewDocumentToDB
   );
 
 router.post('/documents/getDocumentsByIds', async (req, res) => {

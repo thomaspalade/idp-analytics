@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Profile = require('../models/profile');
+const User = require('../models/user');
 
 function getPublicCode(length) {
     var result           = '';
@@ -29,14 +30,33 @@ router.post('/profiles', async (req, res) => {
         country: req.body.country,
         address: req.body.address,
         postalCode: req.body.postalCode,
-        description: req.body.description,
-
+        description: req.body.description
     });
     try {
         console.log(JSON.stringify(profile));
         const savedProfile = await profile.save();
         console.log(JSON.stringify(savedProfile));
-        res.status(201).json(savedProfile);
+        console.log("----   START    ----");
+        console.log(req.body.extraUserInfo);
+        console.log("----   END    ----");
+        
+        const user = new User({
+            email: req.body.email,
+            createdDate: req.body.createdDate,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            _id: req.body.id,
+            hash: req.body.hash
+        });
+        console.log(JSON.stringify(user));
+        try {
+            const savedProfile = await profile.save();
+            const savedUser = await user.save();
+            res.status(201).json(savedProfile);
+        } catch (err) {
+            console.log(JSON.stringify(err.message));
+            res.status(400).json({ message: err.message });
+        }
     } catch (err) {
         console.log(JSON.stringify(err.message));
         res.status(400).json({ message: err.message });

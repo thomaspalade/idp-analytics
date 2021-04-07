@@ -87,18 +87,7 @@ router.post('/updatepassword', async (req, res) => {
                 // if all of the above checks and are correct than make and update call to the user service
                 // insert profile for freshly created user
                 console.log('http://localhost:4000/users/' + userId);
-                /*
-                axios.put('http://localhost:4000/users/' + userId, {
-                  id: userId,
-                  email: email,
-                  password: password
-                }).then(res => {
-                  console.log(`statusCode: ${res.statusCode}`);
-                  console.log(res);
-                }).catch(error => {
-                  console.error(error);
-                });
-                */
+
                 try {
                   userUpdater.updateUserData(userId, {
                     id: userId,
@@ -106,19 +95,23 @@ router.post('/updatepassword', async (req, res) => {
                     password: password
                   });
                 } catch (err) {
-
+                  console.error(err);
                 }
               } catch (err) {
+                console.error(err);
               }
 
             })
           } catch (err) {
+            console.error(err);
           }
         }
       } catch (err) {
+        console.error(err);
       }
     }
   } catch (err) {
+    console.error(err);
   }
 });
 

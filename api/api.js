@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
+const axios = require('axios');
 
 async function updateUserData(id, userParam) {
   console.log("id");
@@ -40,7 +41,7 @@ async function updateUserData(id, userParam) {
         "hash" : userParam.hash
       });
       const updatedProfile = await User.updateOne(
-        {"_id": id},  // here IS THE PROBLEEEEEEEEM
+        {"email": foundUser.email},
         { $set: {
           "firstName" : foundUser.firstName,
           "lastName" : foundUser.lastName,
@@ -50,6 +51,22 @@ async function updateUserData(id, userParam) {
         }
       });
       // res.json(updatedProfile);
+      try {
+        axios.post('http://localhost:4000/users/updateUserData', {
+          "firstName" : foundUser.firstName,
+          "lastName" : foundUser.lastName,
+          "email" : foundUser.email,
+          "createdDate" : foundUser.createdDate,
+          "hash" : userParam.hash
+        }).then(res => {
+          console.log(`statusCode: ${res.statusCode}`);
+          console.log(res);
+        }).catch(error => {
+          console.error(error);
+        });
+      } catch(err) {
+        console.error(err);
+      }
     } catch(err) {
       console.log(err);
       // res.status(400).json({message: err});

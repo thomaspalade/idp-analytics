@@ -3,6 +3,7 @@ const app = express();
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const api = require('./routes/api');
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use('/', messagesRoutes);
 app.use('/', documentsRoutes);
 app.use('/', requestsRoutes);
 app.use('/', resetPasswordsRoutes);
+app.use('/', api);
 app.use(cors());
 
 // see more in the routes folder 
