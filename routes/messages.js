@@ -2,7 +2,12 @@ const express = require('express');
 const router = express.Router();
 const Message = require('../models/message');
 
-// insert a new message 
+// TODO: check if the above routes work (via postman, for instance)
+// TODO: i personally tested the post and it works
+// TODO: when adding a new model in database, you need to create a file just like this for rest API purposes
+// for instance if adding the user model, you need to create users.js file here inside routes directory
+
+// create and insert a new message inside database
 router.post('/messages', async (req, res) => {
   console.log(req.body);
 
@@ -21,8 +26,11 @@ router.post('/messages', async (req, res) => {
 // puts a message at a specified id
 router.put('/message/:id', async (req, res) => {
   try {
+    // first check if there already is a message at the specified id
     const message = await Message.find({userId: req.params.id});
     try {
+      // you don't have to set all the fields
+      // the mongo api allows you update only one of the object's fields
       const updatedMessage = await Message.updateOne(
         {userId: req.params.id}, 
         { $set: {
@@ -61,7 +69,6 @@ router.get('/messages/:id', async (req, res) => {
 
 // find message by id
 router.get('/message/:id', async (req, res) => {
-  console.log("here baby");
   const message = await Message.findOne({userId: req.params.id});
   if (message) {
     res.status(200).json(message);

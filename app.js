@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const api = require('./routes/api');
 
 app.use(express.json());
 var cors = require('cors');
@@ -10,23 +9,13 @@ app.use(cors());
 
 dotenv.config();
 
-const profilesRoutes = require('./routes/profiles');
-const feedbacksRoutes = require('./routes/feedbacks');
 const messagesRoutes = require('./routes/messages');
-const documentsRoutes = require('./routes/documents');
-const requestsRoutes = require('./routes/requests');
-const resetPasswordsRoutes = require('./routes/passwordresets');
+// TODO: require each route individually here
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use('/', profilesRoutes);
-app.use('/', feedbacksRoutes);
 app.use('/', messagesRoutes);
-app.use('/', documentsRoutes);
-app.use('/', requestsRoutes);
-app.use('/', resetPasswordsRoutes);
-app.use('/', api);
-
+// TODO: use each route individually here
 
 // see more in the routes folder 
 app.get('/', (req, res) => {
@@ -35,7 +24,7 @@ app.get('/', (req, res) => {
 
 // now we have to set up default mongoose connection
 // tomi messing things up
-mongoose.connect("mongodb://localhost/mongotube", {
+mongoose.connect("mongodb://localhost/analyticsIDPdatabase", {
     useNewUrlParser: true,
     useUnifiedTopology: true
     }, () => { 
@@ -44,4 +33,4 @@ mongoose.connect("mongodb://localhost/mongotube", {
 );
 
 // start the server
-app.listen(5000);
+app.listen(9999);   // PORT 999 -> this should have a getPort() function when running in PROD -> DOCKERFILE
