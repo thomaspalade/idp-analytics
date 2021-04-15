@@ -1,7 +1,7 @@
 # idp-analytics
 
-# instalation: npm install
+instalation: npm install
 
-# run: npm start 
+run: npm start 
 
-# this service is running on port 9999 locally for now
+this service is running on port 9999 locally for now
